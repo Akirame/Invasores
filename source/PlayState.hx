@@ -8,6 +8,10 @@ class PlayState extends FlxState
 {
 	
 	private var p1:Player;
+	private var enemy1:Enemy;
+	private var enemy2:Enemy;
+	private var enemy3:Enemy;
+	
 	
 	override public function create():Void
 	{
