@@ -22,16 +22,24 @@ class Player extends FlxSprite
 	{
 		super.update(elapsed);
 		movement();
+		OOB();
 	}
 	
-	public function movement()
+	private function movement()
 	{
 		velocity.x = 0;
-		if(FlxG.keys.pressed.J)
+		if(FlxG.keys.pressed.LEFT)
 			velocity.x -= ( 80 * FlxG.elapsed * FlxG.updateFramerate);		
 		
-		if(FlxG.keys.pressed.K)
-			velocity.x += ( 80 * FlxG.elapsed * FlxG.updateFramerate);	
+		if(FlxG.keys.pressed.RIGHT)
+			velocity.x += ( 80 * FlxG.elapsed * FlxG.updateFramerate);
 	}
 	
+	private function OOB()
+	{
+		if (x > FlxG.width - width)
+			x = FlxG.width - width;
+		if (x < 0)
+			x = 0;		
+	}
 }
