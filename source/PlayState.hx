@@ -3,9 +3,18 @@ package;
 import flixel.FlxState;
 import flixel.FlxG;
 import flixel.FlxState;
+import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.FlxSprite;
+
+
 
 class PlayState extends FlxState
 {
+	public var coordX:Float;
+	public var coordY:Float;
+	private var enemyGroup:FlxTypedGroup<Enemy>;
+	
+	
 	
 	private var p1:Player;
 	private var enemy1:Enemy;
@@ -16,9 +25,62 @@ class PlayState extends FlxState
 	override public function create():Void
 	{
 		super.create();
+		enemyGroup = new FlxTypedGroup<Enemy>();
+		
+		
+		coordX = 13;
+		coordY = 9;
 		p1 = new Player(19, 14, AssetPaths.Personaje__png);		
-		add(p1);		
-		FlxG.camera.bgColor = 0xFF1E00FF;				
+		add(p1);
+		FlxG.camera.bgColor = 0xFF1E00FF;
+		
+		for (i in 0 ... 10) 
+		{
+			enemy1 = new Enemy(coordX, coordY, AssetPaths.marcianito__png);
+			add(enemy1);
+			coordX += 14;			
+		}
+		coordX = 13;
+		coordY += 11;
+		for (i in 0 ... 10) 
+		{
+			enemy2 = new Enemy(coordX, coordY, AssetPaths.Marcianito2__png);
+			add(enemy2);
+			coordX += 14;			
+		}
+		coordX = 13;
+		coordY += 11;		
+		for (i in 0 ... 10) 
+		{
+			enemy3 = new Enemy(coordX, coordY, AssetPaths.Marcianito3__png);
+			add(enemy3);
+			coordX += 14;			
+		}
+		coordY += 11;
+		coordX = 13;
+		for (i in 0 ... 10) 
+		{
+			enemy1 = new Enemy(coordX, coordY, AssetPaths.marcianito__png);
+			add(enemy1);
+			coordX += 14;			
+		}
+		coordX = 13;
+		coordY += 11;
+		for (i in 0 ... 10) 
+		{
+			enemy2 = new Enemy(coordX, coordY, AssetPaths.Marcianito2__png);
+			add(enemy2);
+			coordX += 14;			
+		}
+		coordX = 13;
+		coordY += 11;		
+		for (i in 0 ... 10) 
+		{
+			enemy3 = new Enemy(coordX, coordY, AssetPaths.Marcianito3__png);
+			add(enemy3);
+			coordX += 14;			
+		}
+	
 	}
 
 	override public function update(elapsed:Float):Void
