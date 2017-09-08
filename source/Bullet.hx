@@ -8,7 +8,7 @@ import flixel.system.FlxAssets.FlxGraphicAsset;
  * ...
  * @author ...
  */
-class Bullet extends FlxSprite 
+class Bullet extends FlxSprite
 {
 
 	public function new(?X:Float=0, ?Y:Float=0, ?SimpleGraphic:FlxGraphicAsset) 
@@ -17,13 +17,7 @@ class Bullet extends FlxSprite
 		
 		velocity.y = 0;
 		y -= height / 2;
-		
-		override public function update (elapsed:Float):Void
-	{
-		if (y < 0 || y > FlxG.height) 
-		{
-			destroy();
-		}
 	}
-	}
+	
+
 }

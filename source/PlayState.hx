@@ -13,8 +13,8 @@ class PlayState extends FlxState
 	{
 		super.create();
 		p1 = new Player(19, 14, AssetPaths.Personaje__png);		
-		add(p1);
-		FlxG.camera.bgColor = 0xFF1E00FF;
+		add(p1);		
+		FlxG.camera.bgColor = 0xFF1E00FF;				
 	}
 
 	override public function update(elapsed:Float):Void
