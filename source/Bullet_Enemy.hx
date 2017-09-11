@@ -16,7 +16,7 @@ class Bullet_Enemy extends Bullet
 	override public function update(elapsed:Float):Void 
 	{
 		super.update(elapsed);
-		velocity.y = 200;
+		velocity.y = 75;
 		if ( y > FlxG.width)
 		kill();
 	}

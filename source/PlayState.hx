@@ -22,13 +22,14 @@ class PlayState extends FlxState
 	private var enemyToLeft:Bool;
 	private var timerShoot:Timer;
 	private var enemyRandom:FlxRandom;
+	var enemyToDown:Bool;
 	
 	override public function create():Void
 	{
 		super.create();
 		enemyGroup = new FlxTypedGroup<Enemy>();
 		enemyToLeft = false;
-		timerShoot = new Timer(30);
+		timerShoot = new Timer(1000);
 		enemyRandom = new FlxRandom(0);
 		coordX = 13;
 		coordY = 9;
@@ -89,14 +90,15 @@ class PlayState extends FlxState
 
 	override public function update(elapsed:Float):Void
 	{
+		
 		super.update(elapsed);		
 		EnemyMovement();
-		timerShoot.run = EnemyShoot;
+		timerShoot.run = EnemyShoot;			
 	}
 	
 	function EnemyShoot() 
 	{
-		enemyGroup.members[enemyRandom.int(0,enemyGroup.length)].shoot;
+		enemyGroup.members[enemyRandom.int(0, enemyGroup.length - 1)].shoot();			
 	}
 	
 	function EnemyMovement():Void 
@@ -104,10 +106,22 @@ class PlayState extends FlxState
 		for (i in 0...enemyGroup.length)
 		{
 			if (enemyGroup.members[i].x > FlxG.width - enemyGroup.members[i].width)
-				enemyToLeft = true;      						
+			{
+				enemyToLeft = true;      	
+				enemyToDown = true;
+			}
 			if (enemyGroup.members[i].x < 0)
-				enemyToLeft = false;		
+			{
+				enemyToLeft = false;
+				enemyToDown = true;
+			}
 		}
+		if (enemyToDown == true)
+		{
+			for (i in 0...enemyGroup.length)
+			enemyGroup.members[i].y += 10;
+		}
+		enemyToDown = false;
 		if (enemyToLeft == false)	
 		{
 			for (i in 0...enemyGroup.length)
@@ -118,5 +132,6 @@ class PlayState extends FlxState
 			for (i in 0...enemyGroup.length)
 			enemyGroup.members[i].x -= 0.3;
 		}
+		
 	}
 }
