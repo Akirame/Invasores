@@ -24,8 +24,9 @@ class Enemy extends FlxSprite
 	
 	public function shoot()
 	{		
-		if(bullet.alive == false)
-			bullet.reset(x+width/2-1, y+2);
+		if (bullet.alive == false)
+			bullet.reset(x + width / 2 - 1, y + 2);
+
 	}
 	
 }

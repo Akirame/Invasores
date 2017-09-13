@@ -14,26 +14,40 @@ class PlayState extends FlxState
 {
 	public var coordX:Float;
 	public var coordY:Float;
+	public var coordXs:Float;
+	public var coordYs:Float;
 	public var enemyGroup:FlxTypedGroup<Enemy>;
 	private var p1:Player;
+	private var ovni:SpecialEnemy;
 	private var enemy1:Enemy;
 	private var enemy2:Enemy;
 	private var enemy3:Enemy;
+	private var specialEnemy:SpecialEnemy;
 	private var enemyToLeft:Bool;
+	private var ovniAlive:Bool;
 	private var timerShoot:Timer;
 	private var enemyRandom:FlxRandom;
+	private var ovniRandom:FlxRandom;
 	var enemyToDown:Bool;
+	
 	
 	override public function create():Void
 	{
 		super.create();
 		enemyGroup = new FlxTypedGroup<Enemy>();
 		enemyToLeft = false;
+		ovniAlive = false;
 		timerShoot = new Timer(1000);
 		enemyRandom = new FlxRandom(0);
+		ovniRandom = new FlxRandom(0);
 		coordX = 13;
 		coordY = 9;
-		p1 = new Player(19, 14, AssetPaths.Personaje__png);		
+		coordXs = 0;
+		coordYs = 20;
+		p1 = new Player(19, 14, AssetPaths.Personaje__png);
+		ovni = new SpecialEnemy( -20, 5, AssetPaths.alienGrande__png);
+		add(ovni);
+		ovni.kill();
 		add(p1);
 		FlxG.camera.bgColor = 0xFF1E00FF;
 		
@@ -93,12 +107,29 @@ class PlayState extends FlxState
 		
 		super.update(elapsed);		
 		EnemyMovement();
-		timerShoot.run = EnemyShoot;			
+		timerShoot.run = EnemyShoot;
+		
+		if (ovniRandom.int(0 , 1000) == 50 && ovniAlive == false) 
+		{
+			ovni.reset( -20, 10);
+			OvniMovement();
+			ovniAlive = true;
+		}
+		if (ovni.x > 180) 
+		{
+			ovniAlive = false;
+			ovni.kill();
+		}	
+	}
+	
+	function OvniMovement()
+	{
+		ovni.velocity.x += ( 110 * FlxG.elapsed * FlxG.updateFramerate);
 	}
 	
 	function EnemyShoot() 
 	{
-		enemyGroup.members[enemyRandom.int(0, enemyGroup.length - 1)].shoot();			
+		enemyGroup.members[enemyRandom.int(0, enemyGroup.length - 1)].shoot();		
 	}
 	
 	function EnemyMovement():Void 
