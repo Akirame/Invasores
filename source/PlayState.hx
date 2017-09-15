@@ -158,6 +158,23 @@ class PlayState extends FlxState
 				p1.bala.kill();
 				enemy.bullet.kill();
 			}
+			for (struct in structGroup) //EXPERIMENTAL
+			{
+				if (FlxG.overlap(struct, enemy.bullet))
+				{
+					structGroup.remove(struct, false);
+					enemy.bullet.kill();
+				}
+				if (FlxG.overlap(struct, enemy))
+				{
+					structGroup.remove(struct, true);
+				}
+				if (FlxG.overlap(struct, p1.bala))
+				{
+					structGroup.remove(struct, true);
+					p1.bala.kill();
+				}
+			}
 		}	
 		if (FlxG.overlap(p1.bala, ovni))
 		{
@@ -166,7 +183,7 @@ class PlayState extends FlxState
 		}
 	}
 	
-	function OvniSpawn():Void 
+	function OvniSpawn():Void // Spawn ovni aleatorio
 	{
 		if (ovniRandom.int(0 , 1000) == 50 && ovni.alive == false)
 		{
