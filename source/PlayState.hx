@@ -29,7 +29,7 @@ class PlayState extends FlxState
 	private var enemyRandom:FlxRandom;
 	private var ovniRandom:FlxRandom;
 	private var enemyToDown:Bool;
-	
+	private var lives:Int;
 	
 	override public function create():Void
 	{
@@ -46,7 +46,8 @@ class PlayState extends FlxState
 		coordY = 9;
 		coordXs = 12;
 		coordYs = 109;
-	
+		lives = 3;
+		
 		add(ovni);
 		ovni.kill();
 		add(p1);
@@ -82,19 +83,12 @@ class PlayState extends FlxState
 
 	override public function update(elapsed:Float):Void
 	{
-		
-		super.update(elapsed);		
+		super.update(elapsed);
+		OvniSpawn();
 		EnemyMovement();
 		timerShoot.run = EnemyShoot;
 		Collides();
 		
-		
-		if (ovniRandom.int(0 , 1000) == 50 && ovni.alive == false)
-		{
-			ovni.reset( -20, 10);
-		}
-		if (ovni.x > 180) 
-			ovni.kill();
 	}
 	
 
@@ -144,35 +138,15 @@ class PlayState extends FlxState
 	}
 	
 	function Collides():Void // Colisiones
-	{
-		for (struct in structGroup) 
-		{
-			if (FlxG.overlap(p1.bala,struct))
-			{
-				structGroup.remove(struct,true);
-				p1.bala.kill();
-			}
-			
-			for (enemy in enemyGroup)
-			{
-			if (FlxG.overlap(struct,enemy.bullet))
-			{
-				enemy.bullet.kill();
-				structGroup.remove(struct, true);
-			}
-			if (FlxG.overlap(struct, enemy))
-			{
-				structGroup.remove(struct, true);
-			}
-			}
-		}
-		
+	{	
 		for (enemy in enemyGroup)
 		{
 			
 			if (FlxG.overlap(enemy.bullet, p1) || FlxG.overlap(enemy, p1)) 
+			{
 				p1.kill();
-			
+				lives--;
+			}
 			if (FlxG.overlap(p1.bala, enemy))
 			{
 				enemyGroup.remove(enemy, true);
@@ -184,12 +158,27 @@ class PlayState extends FlxState
 				p1.bala.kill();
 				enemy.bullet.kill();
 			}
-		}
-		
+		}	
 		if (FlxG.overlap(p1.bala, ovni))
 		{
 			p1.bala.kill();
 			ovni.kill();
 		}
+	}
+	
+	function OvniSpawn():Void 
+	{
+		if (ovniRandom.int(0 , 1000) == 50 && ovni.alive == false)
+		{
+			ovni.reset( -20, 10);
+		}
+		if (ovni.x > 180) 
+			ovni.kill();
+	}
+	
+	function EndGame():Void 
+	{
+		if (lives == 0)
+			FlxG.switchState(new GameOver());
 	}
 }
