@@ -17,14 +17,15 @@ class PlayState extends FlxState
 	public var coordXs:Float;
 	public var coordYs:Float;
 	public var enemyGroup:FlxTypedGroup<Enemy>;
+	public var structGroup:FlxTypedGroup<Enemy>;
 	private var p1:Player;
 	private var ovni:SpecialEnemy;
 	private var enemy1:Enemy;
-	private var enemy2:Enemy;
-	private var enemy3:Enemy;
+	private var struct:Enemy;
+	//private var enemy2:Enemy;
+	//private var enemy3:Enemy;
 	private var specialEnemy:SpecialEnemy;
 	private var enemyToLeft:Bool;
-	private var ovniAlive:Bool;
 	private var timerShoot:Timer;
 	private var enemyRandom:FlxRandom;
 	private var ovniRandom:FlxRandom;
@@ -35,21 +36,28 @@ class PlayState extends FlxState
 	{
 		super.create();
 		enemyGroup = new FlxTypedGroup<Enemy>();
+		structGroup = new FlxTypedGroup<Enemy>();
 		enemyToLeft = false;
-		ovniAlive = false;
 		timerShoot = new Timer(1000);
 		enemyRandom = new FlxRandom(0);
 		ovniRandom = new FlxRandom(0);
 		coordX = 13;
 		coordY = 9;
-		coordXs = 0;
-		coordYs = 20;
+		coordXs = 12;
+		coordYs = 109;
 		p1 = new Player(19, 14, AssetPaths.Personaje__png);
 		ovni = new SpecialEnemy( -20, 5, AssetPaths.alienGrande__png);
 		add(ovni);
 		ovni.kill();
 		add(p1);
 		FlxG.camera.bgColor = 0xFF1E00FF;
+		
+		for (i in 0...3) 
+		{
+			struct = new Enemy(coordXs, coordYs, AssetPaths.CuartoDeMuro__png);
+			structGroup.add(struct);
+			coordXs += 12;
+		}
 		
 		for (i in 0 ... 8) 
 		{
@@ -61,20 +69,21 @@ class PlayState extends FlxState
 		coordY += 11;
 		for (i in 0 ... 8) 
 		{
-			enemy2 = new Enemy(coordX, coordY, AssetPaths.Marcianito2__png);
-			enemyGroup.add(enemy2);
+			enemy1 = new Enemy(coordX, coordY, AssetPaths.Marcianito2__png);
+			enemyGroup.add(enemy1);
 			coordX += 14;			
 		}
 		coordX = 13;
 		coordY += 11;		
 		for (i in 0 ... 8) 
 		{
-			enemy3 = new Enemy(coordX, coordY, AssetPaths.Marcianito3__png);
-			enemyGroup.add(enemy3);
+			enemy1 = new Enemy(coordX, coordY, AssetPaths.Marcianito3__png);
+			enemyGroup.add(enemy1);
 			coordX += 14;			
 		}
 		
 		add(enemyGroup);
+		add(structGroup);
 		/*coordY += 11;
 		coordX = 13;
 		for (i in 0 ... 10) 
@@ -109,17 +118,48 @@ class PlayState extends FlxState
 		EnemyMovement();
 		timerShoot.run = EnemyShoot;
 		
-		if (ovniRandom.int(0 , 1000) == 50 && ovniAlive == false) 
+		for (i in structGroup) 
+		{
+			if (FlxG.overlap(p1.bala,struct))
+			{
+				struct.kill();
+				p1.bala.kill();
+			}
+			
+			if (FlxG.overlap(i,enemy1.bullet)) 
+			{
+				enemy1.bullet.kill();
+				struct.kill();
+			}
+		}
+		
+		for (i in enemyGroup)
+		{
+			
+			if (FlxG.overlap(i.bullet, p1) || FlxG.overlap(i,p1)) 
+				p1.kill();
+			
+			if (FlxG.overlap(p1.bala, i))
+			{
+				enemyGroup.remove(i, true);
+				p1.bala.kill();
+			}
+			
+			if (FlxG.overlap(p1.bala,i.bullet)) 
+			{
+				p1.bala.kill();
+				i.bullet.kill();
+			}
+		}
+		
+		
+		if (ovniRandom.int(0 , 1000) == 50 && ovni.alive == false)
 		{
 			ovni.reset( -20, 10);
 			OvniMovement();
-			ovniAlive = true;
 		}
 		if (ovni.x > 180) 
-		{
-			ovniAlive = false;
 			ovni.kill();
-		}	
 	}
 	
 	function OvniMovement()
@@ -131,6 +171,7 @@ class PlayState extends FlxState
 	{
 		enemyGroup.members[enemyRandom.int(0, enemyGroup.length - 1)].shoot();		
 	}
+	
 	
 	function EnemyMovement():Void 
 	{

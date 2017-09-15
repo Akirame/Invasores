@@ -12,7 +12,7 @@ import flixel.system.FlxAssets.FlxGraphicAsset;
 class Enemy extends FlxSprite 
 {
 
-	var bullet:Bullet_Enemy;
+	public var bullet(get, null):Bullet_Enemy;
 	
 	public function new(?X:Float=0, ?Y:Float=0, ?SimpleGraphic:FlxGraphicAsset) 
 	{
@@ -27,6 +27,11 @@ class Enemy extends FlxSprite
 		if (bullet.alive == false)
 			bullet.reset(x + width / 2 - 1, y + 2);
 
+	}
+	
+	function get_bullet():Bullet_Enemy 
+	{
+		return bullet;
 	}
 	
 }

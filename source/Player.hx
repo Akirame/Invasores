@@ -12,7 +12,7 @@ import flixel.system.FlxAssets.FlxGraphicAsset;
  */
 class Player extends FlxSprite 
 {	
-	var bala:Bullet_Player;
+	public var bala(get, null):Bullet_Player;
 	
 	public function new(?X:Float=0, ?Y:Float=0, ?SimpleGraphic:FlxGraphicAsset) 
 	{
@@ -56,5 +56,10 @@ class Player extends FlxSprite
 		{
 			bala.reset(x+ width/2-1.5, y);
 		}
+	}
+	
+	function get_bala():Bullet_Player 
+	{
+		return bala;
 	}
 }
