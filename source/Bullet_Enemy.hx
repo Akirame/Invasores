@@ -20,4 +20,6 @@ class Bullet_Enemy extends Bullet
 		if ( y > FlxG.width)
 		kill();
 	}
+	
+	
 }
