@@ -22,8 +22,6 @@ class PlayState extends FlxState
 	private var ovni:SpecialEnemy;
 	private var enemy1:Enemy;
 	private var struct:Enemy;
-	//private var enemy2:Enemy;
-	//private var enemy3:Enemy;
 	private var specialEnemy:SpecialEnemy;
 	private var enemyToLeft:Bool;
 	private var timerShoot:Timer;
@@ -52,63 +50,26 @@ class PlayState extends FlxState
 		add(p1);
 		FlxG.camera.bgColor = 0xFF1E00FF;
 		
-		for (i in 0...3) 
+		for (i in 0...3) // Instanciacion estructuras
 		{
 			struct = new Enemy(coordXs, coordYs, AssetPaths.CuartoDeMuro__png);
 			structGroup.add(struct);
 			coordXs += 12;
 		}
 		
-		for (i in 0 ... 8) 
+		for (i in 0 ... 8) // Instanciacion grupo de enemigos
 		{
 			enemy1 = new Enemy(coordX, coordY, AssetPaths.marcianito__png);
-			enemyGroup.add(enemy1);
-			coordX += 14;			
-		}
-		coordX = 13;
-		coordY += 11;
-		for (i in 0 ... 8) 
-		{
-			enemy1 = new Enemy(coordX, coordY, AssetPaths.Marcianito2__png);
-			enemyGroup.add(enemy1);
-			coordX += 14;			
-		}
-		coordX = 13;
-		coordY += 11;		
-		for (i in 0 ... 8) 
-		{
-			enemy1 = new Enemy(coordX, coordY, AssetPaths.Marcianito3__png);
+			enemyGroup.add(enemy1);		
+			enemy1 = new Enemy(coordX, coordY+11, AssetPaths.Marcianito2__png);
+			enemyGroup.add(enemy1);		
+			enemy1 = new Enemy(coordX, coordY+22, AssetPaths.Marcianito3__png);
 			enemyGroup.add(enemy1);
 			coordX += 14;			
 		}
 		
 		add(enemyGroup);
 		add(structGroup);
-		/*coordY += 11;
-		coordX = 13;
-		for (i in 0 ... 10) 
-		{
-			enemy1 = new Enemy(coordX, coordY, AssetPaths.marcianito__png);
-			add(enemy1);
-			coordX += 14;			
-		}
-		coordX = 13;
-		coordY += 11;
-		for (i in 0 ... 10) 
-		{
-			enemy2 = new Enemy(coordX, coordY, AssetPaths.Marcianito2__png);
-			add(enemy2);
-			coordX += 14;			
-		}
-		coordX = 13;
-		coordY += 11;		
-		for (i in 0 ... 10) 
-		{
-			enemy3 = new Enemy(coordX, coordY, AssetPaths.Marcianito3__png);
-			add(enemy3);
-			coordX += 14;			
-		}*/
-	
 	}
 
 	override public function update(elapsed:Float):Void
@@ -117,7 +78,61 @@ class PlayState extends FlxState
 		super.update(elapsed);		
 		EnemyMovement();
 		timerShoot.run = EnemyShoot;
+		Collides();
 		
+		
+		if (ovniRandom.int(0 , 1000) == 50 && ovni.alive == false)
+		{
+			ovni.reset( -20, 10);
+		}
+		if (ovni.x > 180) 
+			ovni.kill();
+	}
+	
+
+	
+	function EnemyShoot() // Disparo aleatorio grupo de enemigos
+	{
+		enemyGroup.members[enemyRandom.int(0, enemyGroup.length - 1)].shoot();		
+	}
+	
+	
+	function EnemyMovement():Void // Movimiento del grupo de enemigos
+	{
+		for (i in enemyGroup)
+		{
+			if (i.x > FlxG.width - i.width)
+			{
+				enemyToLeft = true;      	
+				enemyToDown = true;
+			}
+			if (i.x < 0)
+			{
+				enemyToLeft = false;
+				enemyToDown = true;
+			}
+		}
+		if (enemyToDown == true)
+		{
+			for (i in enemyGroup)
+			i.y += 10;
+		}
+		enemyToDown = false;
+		if (enemyToLeft == false)	
+		{
+			for (i in enemyGroup)
+			i.x += 0.3;
+		}
+		else 
+		{
+			for (i in enemyGroup)
+			i.x -= 0.3;
+		}
+		
+	}
+	
+	function Collides():Void // Colisiones
+	{
 		for (i in structGroup) 
 		{
 			if (FlxG.overlap(p1.bala,struct))
@@ -136,7 +151,8 @@ class PlayState extends FlxState
 		for (i in enemyGroup)
 		{
 			
-			if (FlxG.overlap(i.bullet, p1) || FlxG.overlap(i,p1)) 
+			if (FlxG.overlap(i.bullet, p1) || FlxG.overlap(i, p1)) 
+				
 				p1.kill();
 			
 			if (FlxG.overlap(p1.bala, i))
@@ -151,59 +167,5 @@ class PlayState extends FlxState
 				i.bullet.kill();
 			}
 		}
-		
-		
-		if (ovniRandom.int(0 , 1000) == 50 && ovni.alive == false)
-		{
-			ovni.reset( -20, 10);
-			OvniMovement();
-		}
-		if (ovni.x > 180) 
-			ovni.kill();
-	}
-	
-	function OvniMovement()
-	{
-		ovni.velocity.x += ( 110 * FlxG.elapsed * FlxG.updateFramerate);
-	}
-	
-	function EnemyShoot() 
-	{
-		enemyGroup.members[enemyRandom.int(0, enemyGroup.length - 1)].shoot();		
-	}
-	
-	
-	function EnemyMovement():Void 
-	{
-		for (i in 0...enemyGroup.length)
-		{
-			if (enemyGroup.members[i].x > FlxG.width - enemyGroup.members[i].width)
-			{
-				enemyToLeft = true;      	
-				enemyToDown = true;
-			}
-			if (enemyGroup.members[i].x < 0)
-			{
-				enemyToLeft = false;
-				enemyToDown = true;
-			}
-		}
-		if (enemyToDown == true)
-		{
-			for (i in 0...enemyGroup.length)
-			enemyGroup.members[i].y += 10;
-		}
-		enemyToDown = false;
-		if (enemyToLeft == false)	
-		{
-			for (i in 0...enemyGroup.length)
-			enemyGroup.members[i].x += 0.3;
-		}
-		else 
-		{
-			for (i in 0...enemyGroup.length)
-			enemyGroup.members[i].x -= 0.3;
-		}
-		
 	}
 }
