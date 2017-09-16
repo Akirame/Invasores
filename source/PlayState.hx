@@ -158,21 +158,25 @@ class PlayState extends FlxState
 				p1.bala.kill();
 				enemy.bullet.kill();
 			}
-			for (struct in structGroup) //EXPERIMENTAL
+			
+			if (enemy.bullet.y > 108-enemy.bullet.height && enemy.bullet.y < 123 && enemy.bullet.alive)
 			{
-				if (FlxG.overlap(struct, enemy.bullet))
+				for (struct in structGroup) //EXPERIMENTAL
 				{
-					structGroup.remove(struct, false);
-					enemy.bullet.kill();
-				}
-				if (FlxG.overlap(struct, enemy))
-				{
-					structGroup.remove(struct, true);
-				}
-				if (FlxG.overlap(struct, p1.bala))
-				{
-					structGroup.remove(struct, true);
-					p1.bala.kill();
+					if (FlxG.pixelPerfectOverlap(struct, enemy.bullet))
+					{
+						structGroup.remove(struct, false);
+						enemy.bullet.kill();
+					}
+					if (FlxG.overlap(struct, enemy))
+					{
+						structGroup.remove(struct, true);
+					}
+					if (FlxG.overlap(struct, p1.bala))
+					{
+						structGroup.remove(struct, true);
+						p1.bala.kill();
+					}
 				}
 			}
 		}	
