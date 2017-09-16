@@ -88,6 +88,7 @@ class PlayState extends FlxState
 		EnemyMovement();
 		timerShoot.run = EnemyShoot;
 		Collides();
+		EndGame();
 		
 	}
 	
@@ -145,7 +146,7 @@ class PlayState extends FlxState
 			if (FlxG.overlap(enemy.bullet, p1) || FlxG.overlap(enemy, p1)) 
 			{
 				p1.kill();
-				lives--;
+				lives = 0;
 			}
 			if (FlxG.overlap(p1.bala, enemy))
 			{
@@ -159,9 +160,20 @@ class PlayState extends FlxState
 				enemy.bullet.kill();
 			}
 			
-			if (enemy.bullet.y > 108-enemy.bullet.height && enemy.bullet.y < 123 && enemy.bullet.alive)
+			if (p1.bala.alive && p1.bala.y >= 109 && p1.bala.y <= 117)//EXPERIMENTAL
 			{
-				for (struct in structGroup) //EXPERIMENTAL
+				for (struct	in structGroup) 
+					{
+							if (FlxG.overlap(struct, p1.bala))
+							{
+								structGroup.remove(struct, true);
+								p1.bala.kill();
+							}
+					}
+			}
+			if (enemy.bullet.y > 108 && enemy.bullet.y < 123 && enemy.bullet.alive)//EXPERIMENTAL
+			{
+				for (struct in structGroup) 
 				{
 					if (FlxG.pixelPerfectOverlap(struct, enemy.bullet))
 					{
@@ -171,11 +183,6 @@ class PlayState extends FlxState
 					if (FlxG.overlap(struct, enemy))
 					{
 						structGroup.remove(struct, true);
-					}
-					if (FlxG.overlap(struct, p1.bala))
-					{
-						structGroup.remove(struct, true);
-						p1.bala.kill();
 					}
 				}
 			}
