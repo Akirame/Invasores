@@ -6,6 +6,7 @@ import flixel.FlxState;
 import flixel.FlxStrip;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxSprite;
+import flixel.text.FlxText;
 import haxe.Timer;
 import flixel.math.FlxRandom;
 
@@ -30,6 +31,11 @@ class PlayState extends FlxState
 	private var ovniRandom:FlxRandom;
 	private var enemyToDown:Bool;
 	private var lives:Int;
+	private var score:Int;
+	private var hScore:Int;
+	private var textoScore:FlxText;
+	private var textohScore:FlxText;
+	private var textoYouWin:FlxText;
 	
 	override public function create():Void
 	{
@@ -47,7 +53,15 @@ class PlayState extends FlxState
 		coordXs = 12;
 		coordYs = 109;
 		lives = 3;
+		score = 0;
+		hScore = 500;
+		textoScore = new FlxText(0, 0, 0, "Puntaje:" + score, 8);
+		textohScore = new FlxText(85, 0, 0, "HighScore:" + hScore, 8);
+		textoYouWin = new FlxText(FlxG.width / 2, FlxG.height / 2, 0, "YOU WIN", 8);
 		
+		
+		add(textohScore);
+		add(textoScore);
 		add(ovni);
 		ovni.kill();
 		add(p1);
@@ -84,20 +98,31 @@ class PlayState extends FlxState
 	override public function update(elapsed:Float):Void
 	{
 		super.update(elapsed);
+		timerShoot.run = EnemyShoot;
+		
 		OvniSpawn();
 		EnemyMovement();
-		timerShoot.run = EnemyShoot;
 		Collides();
 		EndGame();
-		
+		CheckHighScore();
 	}
 	
 
+	function CheckHighScore()
+	{
+		if (score > hScore) 
+		{
+			hScore = score;
+			textohScore.destroy();
+			textohScore = new FlxText(85, 0, 0, "HighScore:" + hScore, 8);
+			add(textohScore);
+		}
+	}
 	
 	function EnemyShoot() // Disparo aleatorio grupo de enemigos
 	{
 		if (enemyGroup.alive)
-			enemyGroup.members[enemyRandom.int(0, enemyGroup.length - 1)].shoot();		
+			enemyGroup.members[enemyRandom.int(0, enemyGroup.length - 1)].shoot();
 	}
 	
 	
@@ -152,6 +177,10 @@ class PlayState extends FlxState
 			{
 				enemyGroup.remove(enemy, true);
 				p1.bala.kill();
+				score += 30;
+				textoScore.destroy();
+				textoScore = new FlxText(0, 0, 0, "Puntaje:" + score, 8);
+				add(textoScore);
 			}
 			
 			if (FlxG.overlap(p1.bala,enemy.bullet)) 
@@ -191,7 +220,11 @@ class PlayState extends FlxState
 		{
 			p1.bala.kill();
 			ovni.kill();
-		}
+			score += 300;
+			textoScore.destroy();
+			textoScore = new FlxText(0, 0, 0, "Puntaje:" + score, 8);
+			add(textoScore);
+		}  
 	}
 	
 	function OvniSpawn():Void // Spawn ovni aleatorio
