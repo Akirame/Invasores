@@ -7,7 +7,6 @@ import flixel.FlxStrip;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
-import haxe.Timer;
 import flixel.math.FlxRandom;
 
 
@@ -26,7 +25,6 @@ class PlayState extends FlxState
 	private var struct:FlxSprite;
 	private var specialEnemy:SpecialEnemy;
 	private var enemyToLeft:Bool;
-	private var timerShoot:Timer;
 	private var enemyRandom:FlxRandom;
 	private var ovniRandom:FlxRandom;
 	private var enemyToDown:Bool;
@@ -36,6 +34,7 @@ class PlayState extends FlxState
 	private var textoScore:FlxText;
 	private var textohScore:FlxText;
 	private var textoYouWin:FlxText;
+	private var contador:Int;
 	
 	override public function create():Void
 	{
@@ -45,7 +44,6 @@ class PlayState extends FlxState
 		p1 = new Player(19, 14, AssetPaths.Personaje__png);
 		ovni = new SpecialEnemy( -20, 5, AssetPaths.alienGrande__png);
 		enemyToLeft = false;
-		timerShoot = new Timer(1000);
 		enemyRandom = new FlxRandom(0);
 		ovniRandom = new FlxRandom(0);
 		coordX = 13;
@@ -53,6 +51,7 @@ class PlayState extends FlxState
 		coordXs = 12;
 		coordYs = 109;
 		lives = 3;
+		contador = 0;
 		score = 0;
 		hScore = 500;
 		textoScore = new FlxText(0, 0, 0, "Puntaje:" + score, 8);
@@ -97,9 +96,9 @@ class PlayState extends FlxState
 
 	override public function update(elapsed:Float):Void
 	{
-		super.update(elapsed);
-		timerShoot.run = EnemyShoot;
 		
+		super.update(elapsed);
+		ShootCountdown();
 		OvniSpawn();
 		EnemyMovement();
 		Collides();
@@ -121,8 +120,8 @@ class PlayState extends FlxState
 	
 	function EnemyShoot() // Disparo aleatorio grupo de enemigos
 	{
-		if (enemyGroup.alive)
-			enemyGroup.members[enemyRandom.int(0, enemyGroup.length - 1)].shoot();
+		if (enemyGroup.countLiving() != -1)
+			enemyGroup.getRandom().shoot();
 	}
 	
 	
@@ -167,13 +166,12 @@ class PlayState extends FlxState
 	{	
 		for (enemy in enemyGroup)
 		{
-			
-			if (FlxG.overlap(enemy.bullet, p1) || FlxG.overlap(enemy, p1)) 
+			if (FlxG.overlap(enemy.bullet, p1) || FlxG.overlap(enemy, p1))  // Bala enemiga y player
 			{
 				p1.kill();
 				lives = 0;
 			}
-			if (FlxG.overlap(p1.bala, enemy))
+			if (FlxG.overlap(p1.bala, enemy)) // Bala player y enemigo
 			{
 				enemyGroup.remove(enemy, true);
 				p1.bala.kill();
@@ -183,13 +181,31 @@ class PlayState extends FlxState
 				add(textoScore);
 			}
 			
-			if (FlxG.overlap(p1.bala,enemy.bullet)) 
+			if (FlxG.overlap(p1.bala,enemy.bullet)) //Bala player y bala enemiga
 			{
 				p1.bala.kill();
 				enemy.bullet.kill();
 			}
 			
-			if (p1.bala.alive && p1.bala.y >= 109 && p1.bala.y <= 117)//EXPERIMENTAL
+			if (enemy.bullet.alive) //Struc y bala enemiga
+			{
+				for (struct in structGroup) 
+				{
+					if (FlxG.pixelPerfectOverlap(struct, enemy.bullet))
+					{
+						structGroup.remove(struct, false);
+						enemy.bullet.kill();
+					}					
+				}
+			}	
+			for (struct in structGroup) //struct y enemigos
+			{
+				if (FlxG.overlap(struct, enemy))
+					structGroup.remove(struct, true);
+			}			
+		}	
+		
+		if (p1.bala.alive) // Bala player y struct
 			{
 				for (struct	in structGroup) 
 					{
@@ -200,23 +216,7 @@ class PlayState extends FlxState
 							}
 					}
 			}
-			if (enemy.bullet.y > 108 && enemy.bullet.y < 123 && enemy.bullet.alive)//EXPERIMENTAL
-			{
-				for (struct in structGroup) 
-				{
-					if (FlxG.pixelPerfectOverlap(struct, enemy.bullet))
-					{
-						structGroup.remove(struct, false);
-						enemy.bullet.kill();
-					}
-					if (FlxG.overlap(struct, enemy))
-					{
-						structGroup.remove(struct, true);
-					}
-				}
-			}
-		}	
-		if (FlxG.overlap(p1.bala, ovni))
+		if (FlxG.overlap(p1.bala, ovni)) //Bala player y ovni
 		{
 			p1.bala.kill();
 			ovni.kill();
@@ -241,5 +241,16 @@ class PlayState extends FlxState
 	{
 		if (lives == 0)
 			FlxG.switchState(new GameOver());
+	}
+	
+	function ShootCountdown():Void 
+	{
+		if (contador == 40)
+		{
+			EnemyShoot();
+			contador = 0;
+		}
+		else
+			contador++;
 	}
 }
