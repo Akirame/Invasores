@@ -104,7 +104,7 @@ class PlayState extends FlxState
 		EnemyMovement();
 		Collides();
 		EndGame();
-		CheckHighScore();
+		CheckHighScore(); //COMENTARIO PARA ENSEÑARLE A IAN NO SE ASUSTEN
 	}
 	
 
