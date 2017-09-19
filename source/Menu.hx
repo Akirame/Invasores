@@ -24,7 +24,7 @@ class Menu extends FlxState
 		add(texto);
 		texto = new FlxText (0, 80, 0, "Gastón Villalba", 8);
 		add(texto);
-		texto = new FlxText (46, 100, 0, "Apretá Enter", 8);
+		texto = new FlxText (40, 100, 0, "Z para comenzar", 8);
 		add(texto);
 		
 		FlxG.sound.play(AssetPaths.pantalla_de_inicio__wav);
@@ -32,7 +32,7 @@ class Menu extends FlxState
 	
 	override public function update(elapsed:Float):Void
 	{
-		if (FlxG.keys.justPressed.ENTER)
+		if (FlxG.keys.justPressed.Z)
 			FlxG.switchState(new PlayState());
 	}
 	

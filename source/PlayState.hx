@@ -8,6 +8,8 @@ import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
 import flixel.math.FlxRandom;
+import haxe.Timer;
+import source.Global;
 
 
 
@@ -28,13 +30,12 @@ class PlayState extends FlxState
 	private var enemyRandom:FlxRandom;
 	private var ovniRandom:FlxRandom;
 	private var enemyToDown:Bool;
-	private var lives:Int;
-	private var score:Int;
-	private var hScore:Int;
 	private var textoScore:FlxText;
 	private var textohScore:FlxText;
+	private var textoLives:FlxText;
 	private var textoYouWin:FlxText;
 	private var contador:Int;
+	private var deathTimer:Int;
 	
 	override public function create():Void
 	{
@@ -49,18 +50,18 @@ class PlayState extends FlxState
 		coordX = 13;
 		coordY = 9;
 		coordXs = 12;
-		coordYs = 109;
-		lives = 3;
+		coordYs = 109;		
 		contador = 0;
-		score = 0;
-		hScore = 500;
-		textoScore = new FlxText(0, 0, 0, "Puntaje:" + score, 8);
-		textohScore = new FlxText(85, 0, 0, "HighScore:" + hScore, 8);
+		deathTimer = 0;
+		textoScore = new FlxText(0, 0, 0, "Puntaje:" + Global.score, 8);
+		textohScore = new FlxText(85, 0, 0, "HighScore:" + Global.hScore, 8);
 		textoYouWin = new FlxText(FlxG.width / 2, FlxG.height / 2, 0, "YOU WIN", 8);
+		textoLives = new FlxText(0, 10, 0, "Vidas:" + Global.lives, 8);
 		
 		
 		add(textohScore);
 		add(textoScore);
+		add(textoLives);
 		add(ovni);
 		ovni.kill();
 		add(p1);
@@ -97,25 +98,25 @@ class PlayState extends FlxState
 	}
 
 	override public function update(elapsed:Float):Void
-	{
-		
+	{		
 		super.update(elapsed);
+		PlayerLives();
+		EndGame();
 		ShootCountdown();
 		OvniSpawn();
 		EnemyMovement();
-		Collides();
-		EndGame();
+		Collides();		
 		CheckHighScore(); //COMENTARIO PARA ENSEÑARLE A IAN NO SE ASUSTEN
 	}
 	
 
-	function CheckHighScore()
+	function CheckHighScore() // Highscore
 	{
-		if (score > hScore) 
+		if (Global.score > Global.hScore) 
 		{
-			hScore = score;
+			Global.hScore = Global.score;
 			textohScore.destroy();
-			textohScore = new FlxText(85, 0, 0, "HighScore:" + hScore, 8);
+			textohScore = new FlxText(85, 0, 0, "HighScore:" + Global.hScore, 8);
 			add(textohScore);
 		}
 	}
@@ -126,6 +127,16 @@ class PlayState extends FlxState
 			enemyGroup.getRandom().shoot();
 	}
 	
+	function ShootCountdown():Void // Conteo para el disparo aleatorio
+	{
+		if (contador == 40)
+		{
+			EnemyShoot();
+			contador = 0;
+		}
+		else
+			contador++;
+	}
 	
 	function EnemyMovement():Void // Movimiento del grupo de enemigos
 	{
@@ -170,16 +181,19 @@ class PlayState extends FlxState
 		{
 			if (FlxG.overlap(enemy.bullet, p1) || FlxG.overlap(enemy, p1))  // Bala enemiga y player
 			{
-				p1.kill();
-				lives = 0;
+				p1.kill();	
+				Global.lives--;				
+				textoLives.destroy();
+				textoLives = new FlxText(0, 10, 0, "Vidas:" + Global.lives, 8);
+				add(textoLives);
 			}
 			if (FlxG.overlap(p1.bala, enemy)) // Bala player y enemigo
 			{
 				enemyGroup.remove(enemy, true);
 				p1.bala.kill();
-				score += 30;
+				Global.score += 30;
 				textoScore.destroy();
-				textoScore = new FlxText(0, 0, 0, "Puntaje:" + score, 8);
+				textoScore = new FlxText(0, 0, 0, "Puntaje:" + Global.score, 8);
 				add(textoScore);
 			}
 			
@@ -195,8 +209,8 @@ class PlayState extends FlxState
 				{
 					if (FlxG.pixelPerfectOverlap(struct, enemy.bullet))
 					{
-						structGroup.remove(struct, false);
 						enemy.bullet.kill();
+						structGroup.remove(struct, false);
 					}					
 				}
 			}	
@@ -222,9 +236,9 @@ class PlayState extends FlxState
 		{
 			p1.bala.kill();
 			ovni.kill();
-			score += 300;
+			Global.score += 300;
 			textoScore.destroy();
-			textoScore = new FlxText(0, 0, 0, "Puntaje:" + score, 8);
+			textoScore = new FlxText(0, 0, 0, "Puntaje:" + Global.score, 8);
 			add(textoScore);
 		}  
 	}
@@ -239,20 +253,23 @@ class PlayState extends FlxState
 			ovni.kill();
 	}
 	
-	function EndGame():Void 
+	function EndGame():Void // Cambio de state a gameover
 	{
-		if (lives == 0)
+		if (Global.lives == 0 || enemyGroup.countLiving() == -1)
 			FlxG.switchState(new GameOver());
 	}
 	
-	function ShootCountdown():Void 
+	function PlayerLives():Void
 	{
-		if (contador == 40)
+		if (p1.alive == false)
 		{
-			EnemyShoot();
-			contador = 0;
+			if (deathTimer == 100)
+			{
+				Global.score = 0;
+				FlxG.resetState();	
+			}
+			else
+				deathTimer++;		
 		}
-		else
-			contador++;
 	}
 }
