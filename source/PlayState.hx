@@ -92,6 +92,8 @@ class PlayState extends FlxState
 		
 		add(enemyGroup);
 		add(structGroup);
+		
+		FlxG.sound.playMusic(AssetPaths.Maintreme__wav);
 	}
 
 	override public function update(elapsed:Float):Void
