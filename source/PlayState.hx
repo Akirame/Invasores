@@ -10,6 +10,7 @@ import flixel.text.FlxText;
 import flixel.math.FlxRandom;
 import haxe.Timer;
 import source.Global;
+import flixel.util.FlxColor;
 
 
 
@@ -52,13 +53,10 @@ class PlayState extends FlxState
 		coordYs = 109;		
 		contador = 0;
 		deathTimer = 0;
-		textoScore = new FlxText(0, 0, 0, "Puntaje:" + Global.score, 8,true);
-		textohScore = new FlxText(85, 0, 0, "HighScore:" + Global.hScore, 8);		
-		textoLives = new FlxText(0, 10, 0, "Vidas:" + Global.lives, 8);		
+		ScoreTextDraw();
+		HscoreTextDraw();
+		LivesTextDraw();
 		
-		add(textohScore);
-		add(textoScore);
-		add(textoLives);
 		add(ovni);
 		ovni.kill();
 		add(p1);
@@ -175,8 +173,7 @@ class PlayState extends FlxState
 				p1.kill();	
 				Global.lives--;				
 				textoLives.destroy();
-				textoLives = new FlxText(0, 10, 0, "Vidas:" + Global.lives, 8);
-				add(textoLives);
+				LivesTextDraw();
 				FlxG.sound.pause();
 				FlxG.sound.play(AssetPaths.Player_Death__wav);
 			}
@@ -186,8 +183,7 @@ class PlayState extends FlxState
 				p1.bala.kill();
 				Global.score += 30;
 				textoScore.destroy();
-				textoScore = new FlxText(0, 0, 0, "Puntaje:" + Global.score, 8);
-				add(textoScore);
+				ScoreTextDraw();
 				FlxG.sound.play(AssetPaths.Enemy_Kill__wav);
 			}
 			
@@ -238,8 +234,7 @@ class PlayState extends FlxState
 			ovni.kill();
 			Global.score += 300;
 			textoScore.destroy();
-			textoScore = new FlxText(0, 0, 0, "Puntaje:" + Global.score, 8);
-			add(textoScore);
+			ScoreTextDraw();
 			FlxG.sound.play(AssetPaths.Enemy_Kill__wav);
 		}  
 	}
@@ -277,5 +272,26 @@ class PlayState extends FlxState
 			Global.difficult += 1;
 			FlxG.resetState();
 		}
+	}
+	
+	function ScoreTextDraw():Void 
+	{
+		textoScore = new FlxText(0, 0, 0, "Puntaje:" + Global.score, 8, true);
+		textoScore.color = 0x000000;
+		add(textoScore);
+	}
+	
+	function HscoreTextDraw():Void 
+	{
+		textohScore = new FlxText(85, 0, 0, "HighScore:" + Global.hScore, 8);		
+		textohScore.color = 0x000000;
+		add(textohScore);
+	}
+	
+	function LivesTextDraw():Void 
+	{
+		textoLives = new FlxText(0, 10, 0, "Vidas:" + Global.lives, 8);		
+		textoLives.color = 0x000000;
+		add(textoLives);
 	}
 }

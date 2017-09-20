@@ -7,7 +7,7 @@ import flixel.FlxStrip;
 import flixel.FlxSprite;
 import flixel.text.FlxText;
 import source.Global;
-
+import flixel.util.FlxColor;
 /**
  * ...
  * @author G
@@ -25,8 +25,11 @@ class GameOver extends FlxState
 	{
 		super.create();
 		cartelito1 = new FlxText(5, 30, 0, "Score: " + Global.score, 16);
+		cartelito1.color = 0x72ff00;
 		cartelito2 = new FlxText(5, 50, 0, "HighScore: " + (Global.hScore) , 16);
+		cartelito2.color = 0x72ff00;
 		cartelito3 = new FlxText(22, 90, 0, "GAME OVER", 16);
+		cartelito3.color = 0x72ff00;
 		add(cartelito1);
 		add(cartelito2);
 		add(cartelito3);
