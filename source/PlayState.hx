@@ -110,8 +110,7 @@ class PlayState extends FlxState
 		{
 			Global.hScore = Global.score;
 			textohScore.destroy();
-			textohScore = new FlxText(85, 0, 0, "HighScore:" + Global.hScore, 8);
-			add(textohScore);
+			HscoreTextDraw();
 		}
 	}
 	
