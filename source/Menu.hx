@@ -14,7 +14,7 @@ class Menu extends FlxState
 	
 	override public function create():Void
 	{
-		texto = new FlxText (40, 20, 0, "Invaders", 14);
+		texto = new FlxText (40, 20, 0, "Invaders", 16);
 		add (texto);
 		texto = new FlxText (0, 50, 0, "Hecho por:", 8);
 		add(texto);

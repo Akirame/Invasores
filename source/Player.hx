@@ -12,7 +12,7 @@ import flixel.system.FlxAssets.FlxGraphicAsset;
  */
 class Player extends FlxSprite 
 {	
-	public var bala(get, null):Bullet_Player;
+	public var bala:Bullet_Player;
 	
 	public function new(?X:Float=0, ?Y:Float=0, ?SimpleGraphic:FlxGraphicAsset) 
 	{
@@ -32,7 +32,7 @@ class Player extends FlxSprite
 		shoot();
 	}
 	
-	private function movement()
+	private function movement() // Movimiento jugador
 	{
 		velocity.x = 0;
 		if(FlxG.keys.pressed.LEFT)
@@ -42,7 +42,7 @@ class Player extends FlxSprite
 			velocity.x += ( 80 * FlxG.elapsed * FlxG.updateFramerate);
 	}
 	
-	private function OOB()
+	private function OOB() // Checkeo limites de pantalla
 	{
 		if (x > FlxG.width - width)
 			x = FlxG.width - width;
@@ -50,17 +50,12 @@ class Player extends FlxSprite
 			x = 0;		
 	}
 	
-	private function shoot()
+	private function shoot() // Disparo jugador
 	{
 		if (FlxG.keys.justPressed.Z && bala.alive == false)
 		{
 			bala.reset(x + width / 2 - 1.5, y);
 			FlxG.sound.play(AssetPaths.Player_Disparo__wav);
 		}
-	}
-	
-	function get_bala():Bullet_Player 
-	{
-		return bala;
 	}
 }
