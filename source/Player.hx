@@ -54,7 +54,8 @@ class Player extends FlxSprite
 	{
 		if (FlxG.keys.justPressed.Z && bala.alive == false)
 		{
-			bala.reset(x+ width/2-1.5, y);
+			bala.reset(x + width / 2 - 1.5, y);
+			FlxG.sound.play(AssetPaths.Player_Disparo__wav);
 		}
 	}
 	

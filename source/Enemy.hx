@@ -25,7 +25,10 @@ class Enemy extends FlxSprite
 	public function shoot()
 	{		
 		if (bullet.alive == false)
-			bullet.reset(x + width / 2 - 1, y + 2);
+			{
+				bullet.reset(x + width / 2 - 1, y + 2);
+				FlxG.sound.play(AssetPaths.Enemy_Disparo__wav);
+			}
 
 	}
 	

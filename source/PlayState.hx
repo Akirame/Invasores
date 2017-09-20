@@ -106,7 +106,7 @@ class PlayState extends FlxState
 		OvniSpawn();
 		EnemyMovement();
 		Collides();		
-		CheckHighScore(); //COMENTARIO PARA ENSEÑARLE A IAN NO SE ASUSTEN
+		CheckHighScore();
 	}
 	
 
@@ -186,6 +186,8 @@ class PlayState extends FlxState
 				textoLives.destroy();
 				textoLives = new FlxText(0, 10, 0, "Vidas:" + Global.lives, 8);
 				add(textoLives);
+				FlxG.sound.pause();
+				FlxG.sound.play(AssetPaths.Player_Death__wav);
 			}
 			if (FlxG.overlap(p1.bala, enemy)) // Bala player y enemigo
 			{
@@ -195,12 +197,14 @@ class PlayState extends FlxState
 				textoScore.destroy();
 				textoScore = new FlxText(0, 0, 0, "Puntaje:" + Global.score, 8);
 				add(textoScore);
+				FlxG.sound.play(AssetPaths.Enemy_Kill__wav);
 			}
 			
 			if (FlxG.overlap(p1.bala,enemy.bullet)) //Bala player y bala enemiga
 			{
 				p1.bala.kill();
 				enemy.bullet.kill();
+				FlxG.sound.play(AssetPaths.Enemy_Kill__wav);
 			}
 			
 			if (enemy.bullet.alive) //Struc y bala enemiga
@@ -211,13 +215,17 @@ class PlayState extends FlxState
 					{
 						enemy.bullet.kill();
 						structGroup.remove(struct, false);
+						FlxG.sound.play(AssetPaths.Structure_Down__wav);
 					}					
 				}
 			}	
 			for (struct in structGroup) //struct y enemigos
 			{
 				if (FlxG.overlap(struct, enemy))
-					structGroup.remove(struct, true);
+					{
+						structGroup.remove(struct, true);
+						FlxG.sound.play(AssetPaths.Structure_Down__wav);
+					}
 			}			
 		}	
 		
@@ -229,6 +237,7 @@ class PlayState extends FlxState
 							{
 								structGroup.remove(struct, true);
 								p1.bala.kill();
+								FlxG.sound.play(AssetPaths.Structure_Down__wav);
 							}
 					}
 			}
@@ -240,6 +249,7 @@ class PlayState extends FlxState
 			textoScore.destroy();
 			textoScore = new FlxText(0, 0, 0, "Puntaje:" + Global.score, 8);
 			add(textoScore);
+			FlxG.sound.play(AssetPaths.Enemy_Kill__wav);
 		}  
 	}
 	
@@ -248,6 +258,7 @@ class PlayState extends FlxState
 		if (ovniRandom.int(0 , 1000) == 50 && ovni.alive == false)
 		{
 			ovni.reset( -20, 10);
+			FlxG.sound.play(AssetPaths.Enemy_Special__wav);
 		}
 		if (ovni.x > 180) 
 			ovni.kill();
@@ -256,7 +267,10 @@ class PlayState extends FlxState
 	function EndGame():Void // Cambio de state a gameover
 	{
 		if (Global.lives == 0 || enemyGroup.countLiving() == -1)
-			FlxG.switchState(new GameOver());
+			{
+				FlxG.sound.pause();
+				FlxG.switchState(new GameOver());
+			}
 	}
 	
 	function PlayerLives():Void
