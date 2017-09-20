@@ -35,6 +35,7 @@ class GameOver extends FlxState
 		conta1 = 0;
 		conta2 = 0;
 		Apagado = false;
+		FlxG.sound.play(AssetPaths.game_over__wav);
 	}
 	
 	override public function update(elapsed:Float):Void 
